@@ -1,63 +1,253 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { supabase } from "./lib/supabase";
 
 export default function Home() {
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [products, setProducts] = useState<
+    {
+      title: string;
+      description: string;
+      email: string;
+      image: string;
+      id: string;
+      createdAt: string;
+    }[]
+  >([]);
+
+  // 投稿ボタン
+  const handlePostClick = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      window.location.href = "/post";
+    } else {
+      window.location.href = "/login";
+    }
+  };
+
+  // 商品を読み込む
+  const loadProducts = async () => {
+    const { data: productsData, error: productsError } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (productsError) {
+      alert("Products Error: " + productsError.message);
+      return;
+    }
+
+    const { data: imagesData, error: imagesError } = await supabase
+      .from("product_images")
+      .select("*");
+
+    if (imagesError) {
+      alert("Images Error: " + imagesError.message);
+      return;
+    }
+
+    // 商品と画像を紐付ける
+    const formattedProducts = productsData.map((product) => {
+      const firstImage = imagesData.find(
+        (image) => image.product_id === product.id
+      );
+
+      return {
+        title: product.title,
+        description: product.description,
+        email: product.email,
+        image: firstImage?.image_url || "",
+        id: product.id,
+        createdAt: new Date(product.created_at).toLocaleDateString("ja-JP"),
+      };
+    });
+
+    setProducts(formattedProducts);
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  // 検索
+  const filteredProducts = products.filter((product) => {
+    const keyword = search.toLowerCase().trim();
+
+    if (!keyword) {
+      return true;
+    }
+
+    return (
+      product.title.toLowerCase().includes(keyword) ||
+      product.description.toLowerCase().includes(keyword) ||
+      product.id.toLowerCase().includes(keyword)
+    );
+  });
+
+  // 1ページ21商品
+  const productsPerPage = 21;
+
+  const totalPages = Math.ceil(
+    filteredProducts.length / productsPerPage
+  );
+
+  const startIndex = (currentPage - 1) * productsPerPage;
+
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + productsPerPage
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-screen flex-col items-center bg-zinc-50 font-sans">
+
+      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-start bg-white px-4 py-10 sm:px-8 md:px-16">
+
+        {/* ロゴ */}
+        <div className="flex items-center gap-3">
+          <Image
+            src="/ころいちロゴ.png"
+            alt="Columbus Marketplace logo"
+            width={80}
+            height={20}
+            priority
+          />
+
+          <span className="text-3xl font-semibold font-serif text-black sm:text-4xl">
+            コロンバス市場
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* 説明 */}
+        <div className="mt-6 flex w-full flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+
+          <h1 className="text-sm font-bold leading-7 tracking-tight text-black sm:text-base sm:leading-8">
+            コロンバス近辺で暮らす日本人をつなぐ、地域密着型のマーケットプレイスです。不要になったものを次の人へ。必要なものを身近な場所で。売る人にも、買う人にも、便利で安心できる場所を提供します。
+          </h1>
+
+          {/* 投稿ボタン ＋ 検索バー */}
+          <div className="flex w-full items-center gap-2 sm:gap-3">
+
+            <button
+              onClick={handlePostClick}
+              className="shrink-0 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 sm:px-4"
+            >
+              投稿する
+            </button>
+
+            <input
+              type="text"
+              placeholder="🔍 商品を検索..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="min-w-0 w-full rounded-lg border p-2 text-sm text-black outline-none focus:border-blue-500"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+          </div>
+
+          {/* 商品一覧 */}
+          <h2 className="mt-6 text-xl font-bold sm:mt-8 sm:text-2xl">
+            商品一覧
+          </h2>
+
+          {/* 商品グリッド
+              スマホ → 2列
+              タブレット → 2列
+              PC → 3列
+          */}
+          <div className="mt-4 grid w-full grid-cols-2 gap-3 sm:mt-6 sm:gap-4 md:grid-cols-3">
+
+            {currentProducts.map((product) => (
+              <Link
+                key={product.id}
+                href={`/product/${product.id}`}
+                className="w-full overflow-hidden rounded-xl border bg-white shadow-md transition hover:shadow-lg"
+              >
+
+                {/* 商品画像 */}
+                {product.image ? (
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="h-40 w-full object-contain bg-gray-100 sm:h-52 md:h-60"
+                  />
+                ) : (
+                  <div className="flex h-40 items-center justify-center bg-gray-200 text-xs text-gray-500 sm:h-52 md:h-60">
+                    No Image
+                  </div>
+                )}
+
+                {/* 商品情報 */}
+                <div className="p-3 sm:p-4 md:p-5">
+
+                  <h2 className="line-clamp-2 text-sm font-bold sm:text-base md:text-lg">
+                    {product.title}
+                  </h2>
+
+                  <p className="mt-2 line-clamp-3 text-xs text-gray-700 sm:mt-3">
+                    {product.description}
+                  </p>
+
+                  <p className="mt-3 truncate text-xs text-gray-500 sm:mt-4">
+                    📧 {product.email}
+                  </p>
+
+                  <div className="mt-4 flex justify-between gap-2 text-[10px] text-gray-400 sm:mt-6 sm:text-xs">
+                    <span>{product.createdAt}</span>
+                    <span>ID: {product.id}</span>
+                  </div>
+
+                </div>
+              </Link>
+            ))}
+
+          </div>
+
+          {/* 検索結果がない場合 */}
+          {filteredProducts.length === 0 && (
+            <p className="mt-8 w-full text-center text-sm text-gray-500">
+              該当する商品が見つかりませんでした。
+            </p>
+          )}
+
+          {/* ページ移動 */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex w-full items-center justify-center gap-3">
+
+              <button
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="rounded-lg border px-3 py-2 text-sm text-black transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4"
+              >
+                ← 前へ
+              </button>
+
+              <span className="text-sm text-gray-600">
+                {currentPage} / {totalPages}
+              </span>
+
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="rounded-lg border px-3 py-2 text-sm text-black transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4"
+              >
+                次へ →
+              </button>
+
+            </div>
+          )}
+
         </div>
       </main>
     </div>
