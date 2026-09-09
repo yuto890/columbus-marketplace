@@ -8,6 +8,7 @@ import { supabase } from "./lib/supabase";
 export default function Home() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [user, setUser] = useState<any>(null);
 
   const [products, setProducts] = useState<
     {
@@ -20,17 +21,49 @@ export default function Home() {
     }[]
   >([]);
 
-  // 投稿ボタン
-  const handlePostClick = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  // ログイン状態を確認
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
+      setUser(user);
+    };
+
+    getUser();
+
+    // ログイン・ログアウト時に状態を更新
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // 投稿ボタン
+  const handlePostClick = () => {
     if (user) {
       window.location.href = "/post";
     } else {
       window.location.href = "/login";
     }
+  };
+
+  // ログアウト
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      alert("ログアウトに失敗しました: " + error.message);
+      return;
+    }
+
+    window.location.href = "/";
   };
 
   // 商品を読み込む
@@ -133,16 +166,32 @@ export default function Home() {
             コロンバス近辺で暮らす日本人をつなぐ、地域密着型のマーケットプレイスです。不要になったものを次の人へ。必要なものを身近な場所で。売る人にも、買う人にも、便利で安心できる場所を提供します。
           </h1>
 
-          {/* 投稿ボタン ＋ 検索バー */}
+          {/* 投稿ボタン ＋ ログアウトボタン ＋ 検索バー */}
           <div className="flex w-full items-center gap-2 sm:gap-3">
 
-            <button
-              onClick={handlePostClick}
-              className="shrink-0 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 sm:px-4"
-            >
-              投稿する
-            </button>
+            <div className="flex shrink-0 flex-col gap-2">
 
+              {/* 投稿 / ログインして投稿 */}
+              <button
+                onClick={handlePostClick}
+                className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 sm:px-4"
+              >
+                {user ? "投稿する" : "ログインして投稿する"}
+              </button>
+
+              {/* ログイン中のみログアウトを表示 */}
+              {user && (
+                <button
+                  onClick={handleLogout}
+                  className="rounded-lg bg-gray-200 px-3 py-2 text-sm text-black hover:bg-gray-300 sm:px-4"
+                >
+                  ログアウト
+                </button>
+              )}
+
+            </div>
+
+            {/* 検索バー */}
             <input
               type="text"
               placeholder="🔍 商品を検索..."
