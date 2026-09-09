@@ -140,7 +140,7 @@ export default function Home() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-zinc-50 font-sans">
+    <div className="flex min-h-screen flex-col items-center bg-zinc-50">
 
       <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-start bg-white px-4 py-10 sm:px-8 md:px-16">
 
@@ -164,6 +164,13 @@ export default function Home() {
 
           <h1 className="text-sm font-bold leading-7 tracking-tight text-black sm:text-base sm:leading-8">
             コロンバス近辺で暮らす日本人をつなぐ、地域密着型のマーケットプレイスです。不要になったものを次の人へ。必要なものを身近な場所で。売る人にも、買う人にも、便利で安心できる場所を提供します。
+
+            <Link
+              href="/how-to-use"
+              className="ml-2 font-medium text-blue-600 hover:underline"
+            >
+              詳しい使い方はこちら
+            </Link>
           </h1>
 
           {/* 投稿ボタン ＋ ログアウトボタン ＋ 検索バー */}
@@ -210,11 +217,7 @@ export default function Home() {
             商品一覧
           </h2>
 
-          {/* 商品グリッド
-              スマホ → 2列
-              タブレット → 2列
-              PC → 3列
-          */}
+          {/* 商品グリッド */}
           <div className="mt-4 grid w-full grid-cols-2 gap-3 sm:mt-6 sm:gap-4 md:grid-cols-3">
 
             {currentProducts.map((product) => (
