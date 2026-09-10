@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+
 
 export default function HowToUse() {
   return (
@@ -14,9 +16,19 @@ export default function HowToUse() {
             ← コロンバス市場に戻る
           </Link>
 
-          <h1 className="mt-6 text-3xl font-bold text-black sm:text-4xl">
-            コロンバス市場の使い方
-          </h1>
+        <div className="flex items-center justify-center gap-3">
+          <Image
+            src="/ころいちロゴ.png"
+            alt="Columbus Marketplace logo"
+            width={80}
+            height={20}
+            priority
+          />
+
+          <span className="text-3xl font-semibold font-serif text-black sm:text-4xl">
+            コロいちの使い方
+          </span>
+        </div>
 
           <p className="mt-4 text-sm leading-6 text-gray-600 sm:text-base">
             コロンバス近辺で暮らす日本人のためのオンラインマーケットプレイスです。
@@ -195,6 +207,24 @@ export default function HowToUse() {
               </p>
             </div>
 
+          </div>
+        </section>
+
+        {/* お問い合わせ */}
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-black sm:text-2xl">
+            お問い合わせ
+          </h2>
+
+          <div className="mt-4 rounded-xl border bg-gray-50 p-5">
+            <p className="text-sm leading-7 text-gray-700 sm:text-base">
+              コロいちに関するご質問、不具合の報告、不適切な投稿の報告などがございましたら、
+              以下のメールアドレスまでご連絡ください。
+            </p>
+
+            <p className="mt-4 text-sm font-medium text-gray-700 sm:text-base">
+              📧 columbusichiba@gmail.com
+            </p>
           </div>
         </section>
 
