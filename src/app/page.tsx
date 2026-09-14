@@ -235,7 +235,7 @@ export default function Home() {
                     className="h-40 w-full object-contain bg-gray-100 sm:h-52 md:h-60"
                   />
                 ) : (
-                  <div className="flex h-40 items-center justify-center bg-gray-200 text-xs text-gray-500 sm:h-52 md:h-60">
+                  <div className="flex h-40 items-center justify-center bg-gray-200 text-xs text-black sm:h-52 md:h-60">
                     No Image
                   </div>
                 )}
@@ -243,19 +243,19 @@ export default function Home() {
                 {/* 商品情報 */}
                 <div className="p-3 sm:p-4 md:p-5">
 
-                  <h2 className="line-clamp-2 text-sm font-bold sm:text-base md:text-lg">
+                  <h2 className="line-clamp-2 text-sm font-bold text-black sm:text-base md:text-lg">
                     {product.title}
                   </h2>
 
-                  <p className="mt-2 line-clamp-3 text-xs text-gray-700 sm:mt-3">
+                  <p className="mt-2 line-clamp-3 text-xs text-black sm:mt-3">
                     {product.description}
                   </p>
 
-                  <p className="mt-3 truncate text-xs text-gray-500 sm:mt-4">
+                  <p className="mt-3 truncate text-xs text-black sm:mt-4">
                     📧 {product.email}
                   </p>
 
-                  <div className="mt-4 flex justify-between gap-2 text-[10px] text-gray-400 sm:mt-6 sm:text-xs">
+                  <div className="mt-4 flex justify-between gap-2 text-[10px] text-black sm:mt-6 sm:text-xs">
                     <span>{product.createdAt}</span>
                     <span>ID: {product.id}</span>
                   </div>
@@ -268,7 +268,7 @@ export default function Home() {
 
           {/* 検索結果がない場合 */}
           {filteredProducts.length === 0 && (
-            <p className="mt-8 w-full text-center text-sm text-gray-500">
+            <p className="mt-8 w-full text-center text-sm text-black">
               該当する商品が見つかりませんでした。
             </p>
           )}
@@ -285,7 +285,7 @@ export default function Home() {
                 ← 前へ
               </button>
 
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-black">
                 {currentPage} / {totalPages}
               </span>
 

@@ -5,7 +5,6 @@ import { supabase } from "../../lib/supabase";
 import EditButton from "./EditButton";
 import Image from "next/image";
 
-
 export default async function ProductPage({
   params,
 }: {
@@ -19,7 +18,6 @@ export default async function ProductPage({
     .select("*")
     .eq("id", id)
     .single();
-
 
   // 商品画像を取得
   const { data: images, error: imagesError } = await supabase
@@ -54,20 +52,20 @@ export default async function ProductPage({
     <div className="min-h-screen bg-zinc-50">
       <main className="mx-auto w-full max-w-3xl bg-white px-8 py-16">
 
-      {/* ロゴ＋タイトル */}
-      <div className="flex items-center justify-center gap-3">
-        <Image
-          src="/ころいちロゴ.png"
-          alt="Columbus Marketplace logo"
-          width={80}
-          height={20}
-          priority
-        />
+        {/* ロゴ＋タイトル */}
+        <div className="flex items-center justify-center gap-3">
+          <Image
+            src="/ころいちロゴ.png"
+            alt="Columbus Marketplace logo"
+            width={80}
+            height={20}
+            priority
+          />
 
-        <span className="text-3xl font-semibold font-serif text-black sm:text-4xl">
-          コロンバス市場
-        </span>
-      </div>
+          <span className="text-3xl font-semibold font-serif text-black sm:text-4xl">
+            コロンバス市場
+          </span>
+        </div>
 
         <Link
           href="/"
@@ -87,15 +85,15 @@ export default async function ProductPage({
               {product.title}
             </h1>
 
-            <p className="mt-4 text-gray-700">
+            <p className="mt-4 text-black">
               {product.description}
             </p>
 
-            <p className="mt-6 text-sm text-gray-500">
+            <p className="mt-6 text-sm text-black">
               📧 {product.email}
             </p>
 
-            <div className="mt-6 flex justify-between text-xs text-gray-400">
+            <div className="mt-6 flex justify-between text-xs text-black">
               <span>
                 {new Date(product.created_at).toLocaleDateString("ja-JP")}
               </span>
@@ -124,7 +122,5 @@ export default async function ProductPage({
         </div>
       </main>
     </div>
-
-    
   );
 }

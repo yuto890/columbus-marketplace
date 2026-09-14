@@ -155,11 +155,11 @@ export default function PostPage() {
             className="mb-1 w-full rounded border p-2"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            maxLength={20}
+            maxLength={30}
           />
 
           <p className="mb-3 text-right text-xs text-gray-400">
-            {title.length}/20
+            {title.length}/30
           </p>
 
           {/* 商品説明 */}
@@ -168,11 +168,11 @@ export default function PostPage() {
             className="mb-1 w-full rounded border p-2"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            maxLength={70}
+            maxLength={80}
           />
 
           <p className="mb-3 text-right text-xs text-gray-400">
-            {description.length}/70
+            {description.length}/80
           </p>
 
           {/* メール */}
