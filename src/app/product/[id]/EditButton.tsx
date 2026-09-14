@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
+import DeleteButton from "./DeleteButton";
 
 type Props = {
   productId: string;
@@ -73,42 +74,45 @@ export default function EditButton({
     router.refresh();
   };
 
+  // 編集していない状態
   if (!editing) {
     return (
       <button
         onClick={() => setEditing(true)}
         className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
       >
-        ✏️ 商品を編集
+        ✏️ 商品を編集／削除
       </button>
     );
   }
 
+  // 編集中
   return (
-    <div className="mt-4 rounded-lg border p-4">
+    <div className="mt-4 w-full rounded-lg border p-4">
+
       <input
         type="text"
         placeholder="商品名"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        maxLength={20}
-        className="mb-3 w-full rounded border p-2"
+        maxLength={30}
+        className="mb-3 w-full rounded border p-2 text-black"
       />
 
       <p className="mb-3 text-right text-xs text-gray-400">
-        {title.length}/20
+        {title.length}/30
       </p>
 
       <textarea
         placeholder="商品の説明"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        maxLength={70}
-        className="mb-3 w-full rounded border p-2"
+        maxLength={80}
+        className="mb-3 w-full rounded border p-2 text-black"
       />
 
       <p className="mb-3 text-right text-xs text-gray-400">
-        {description.length}/70
+        {description.length}/80
       </p>
 
       <input
@@ -117,13 +121,14 @@ export default function EditButton({
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         maxLength={30}
-        className="mb-3 w-full rounded border p-2"
+        className="mb-3 w-full rounded border p-2 text-black"
       />
 
       <p className="mb-3 text-right text-xs text-gray-400">
         {email.length}/30
       </p>
 
+      {/* 保存・キャンセル */}
       <div className="flex gap-2">
         <button
           onClick={handleEdit}
@@ -139,6 +144,14 @@ export default function EditButton({
         >
           キャンセル
         </button>
+      </div>
+
+      {/* 削除ボタン */}
+      <div className="mt-4 border-t pt-4">
+        <DeleteButton
+          productId={productId}
+          productUserId={productUserId}
+        />
       </div>
     </div>
   );

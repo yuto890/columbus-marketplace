@@ -4,16 +4,19 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 
-export default function DeleteButton({
-  productId,
-  productUserId,
-}: {
+type Props = {
   productId: string;
   productUserId: string;
-}) {
+};
+
+export default function ProductDeleteButton({
+  productId,
+  productUserId,
+}: Props) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+
   const [isOwner, setIsOwner] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkOwner = async () => {
@@ -37,7 +40,7 @@ export default function DeleteButton({
     if (loading) return;
 
     const confirmed = window.confirm(
-      "この商品を削除しますか？"
+      "この商品を削除してもよろしいですか？"
     );
 
     if (!confirmed) return;
@@ -60,12 +63,13 @@ export default function DeleteButton({
   };
 
   return (
-      <button
-        onClick={handleDelete}
-        disabled={loading}
-        className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
-      >
-        {loading ? "削除中..." : "🗑️ 商品を削除"}
-      </button>
+    <button
+    onClick={handleDelete}
+    disabled={loading}
+    className="rounded px-4 py-2 text-white"
+    style={{ backgroundColor: "red" }}
+    >
+    {loading ? "削除中..." : "🗑️ 商品を削除"}
+    </button>
   );
 }

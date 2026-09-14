@@ -103,18 +103,13 @@ export default async function ProductPage({
               </span>
             </div>
 
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-6">
               <EditButton
                 productId={product.id}
                 productUserId={product.user_id}
                 currentTitle={product.title}
                 currentDescription={product.description}
                 currentEmail={product.email}
-              />
-
-              <DeleteButton
-                productId={product.id}
-                productUserId={product.user_id}
               />
             </div>
 
