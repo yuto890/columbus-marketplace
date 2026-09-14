@@ -213,7 +213,7 @@ export default function Home() {
           </div>
 
           {/* 商品一覧 */}
-          <h2 className="mt-6 text-xl font-bold sm:mt-8 sm:text-2xl">
+          <h2 className="mt-6 text-xl text-black font-bold sm:mt-8 sm:text-2xl">
             商品一覧
           </h2>
 

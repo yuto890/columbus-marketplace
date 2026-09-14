@@ -152,7 +152,7 @@ export default function PostPage() {
           <input
             type="text"
             placeholder="商品名"
-            className="mb-1 w-full rounded border p-2"
+            className="mb-1 w-full rounded border p-2 text-black"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={30}
@@ -165,7 +165,7 @@ export default function PostPage() {
           {/* 商品説明 */}
           <textarea
             placeholder="商品の説明"
-            className="mb-1 w-full rounded border p-2"
+            className="mb-1 w-full rounded border p-2 text-black"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={80}
