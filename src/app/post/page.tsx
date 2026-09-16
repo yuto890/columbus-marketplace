@@ -12,7 +12,6 @@ export default function PostPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
   const generateProductId = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let id = "";
@@ -25,10 +24,76 @@ export default function PostPage() {
     return id;
   };
 
+  // 画像を圧縮する
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const canvas = document.createElement("canvas");
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+
+      img.onload = () => {
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+          const ratio = Math.min(
+            MAX_WIDTH / width,
+            MAX_HEIGHT / height
+          );
+
+          width *= ratio;
+          height *= ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+
+            const compressedFile = new File(
+              [blob],
+              file.name.replace(/\.[^/.]+$/, ".jpg"),
+              {
+                type: "image/jpeg",
+              }
+            );
+
+            resolve(compressedFile);
+          },
+          "image/jpeg",
+          0.75
+        );
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleSubmit = async () => {
     if (isSubmitting) return;
-    setIsSubmitting(true);
 
+    // 入力チェック
     if (!title || !description || !email) {
       alert("商品名、説明、メールアドレスを入力してください。");
       return;
@@ -39,6 +104,8 @@ export default function PostPage() {
       return;
     }
 
+    setIsSubmitting(true);
+
     const productId = generateProductId();
 
     const {
@@ -47,6 +114,7 @@ export default function PostPage() {
 
     if (!user) {
       alert("ログインしてください。");
+      setIsSubmitting(false);
       return;
     }
 
@@ -70,15 +138,17 @@ export default function PostPage() {
       return;
     }
 
-    // ② 画像をアップロード
+    // ② 画像を圧縮してアップロード
     for (const file of imageFiles) {
+      const compressedFile = await compressImage(file);
+
       const fileName = `${Date.now()}-${Math.random()
         .toString(36)
-        .substring(2)}-${file.name}`;
+        .substring(2)}-${compressedFile.name}`;
 
       const { error: uploadError } = await supabase.storage
         .from("product-images")
-        .upload(fileName, file);
+        .upload(fileName, compressedFile);
 
       if (uploadError) {
         alert("画像アップロードエラー: " + uploadError.message);
@@ -248,13 +318,13 @@ export default function PostPage() {
           )}
 
           {/* 投稿ボタン */}
-            <button
+          <button
             className="rounded bg-green-600 px-5 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            >
+          >
             {isSubmitting ? "投稿中..." : "投稿"}
-            </button>
+          </button>
 
         </div>
       </main>
