@@ -27,7 +27,7 @@ export default function PostPage() {
   // 画像を圧縮する
   const compressImage = (file: File): Promise<File> => {
     return new Promise((resolve) => {
-      const img = new Image();
+      const img = new window.Image();
       const canvas = document.createElement("canvas");
       const reader = new FileReader();
 
