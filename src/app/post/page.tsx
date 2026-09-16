@@ -179,7 +179,7 @@ export default function PostPage() {
           <input
             type="email"
             placeholder="メールアドレス"
-            className="mb-1 w-full rounded border p-2"
+            className="mb-1 w-full rounded border p-2 text-black"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             maxLength={30}

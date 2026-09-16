@@ -1,6 +1,5 @@
 import ImageGallery from "./ImageGallery";
 import Link from "next/link";
-import DeleteButton from "./DeleteButton";
 import { supabase } from "../../lib/supabase";
 import EditButton from "./EditButton";
 import Image from "next/image";
